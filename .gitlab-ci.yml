@@ -17,6 +17,8 @@ variables:
 
 checkmarx-scan:
   stage: test
+  tags:
+    - mariner
   image:
     name: checkmarx/${CHECKMARX_DOCKER_IMAGE}
     entrypoint: [""]
