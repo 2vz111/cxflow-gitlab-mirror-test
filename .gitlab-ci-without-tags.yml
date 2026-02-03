@@ -13,8 +13,6 @@ variables:
 
 checkmarx-scan:
   stage: test
-  tags:
-    - mariner                     # <-- must match an available runner tag
   image:
     name: checkmarx/${CHECKMARX_DOCKER_IMAGE}
     entrypoint: [""]
