@@ -1,24 +1,20 @@
-# GitLab CI for Checkmarx CxFlow (SAST) via containerized CLI
-# Uses the official CxFlow Docker image and posts results to GitLab MRs/Issues.
-# Template variables documented by Checkmarx; see refs. [1](https://docs.checkmarx.com/en/34965-8218-gitlab-integration.html)[2](https://github.com/checkmarx-ltd/cx-flow/blob/develop/templates/gitlab/v2/Checkmarx.gitlab-ci.yml)
-
 stages:
   - test
 
 variables:
   CHECKMARX_DOCKER_IMAGE: "cx-flow"
-  CHECKMARX_URL: "https://checkmarx.internal.example"       # <-- change to your on-prem URL
-  CHECKMARX_VERSION: "9.7"                                   # <-- match your CxSAST version
-  CX_TEAM: "/CxServer/SP/Company"                            # <-- your team path
-  CX_PROJECT: "$CI_PROJECT_NAME-$CI_COMMIT_REF_NAME"         # project naming convention
+  CHECKMARX_URL: "https://checkmarx.internal.example"   # <-- your on-prem URL
+  CHECKMARX_VERSION: "9.7"                               # <-- match your CxSAST version
+  CX_TEAM: "/CxServer/SP/Company"
+  CX_PROJECT: "$CI_PROJECT_NAME-$CI_COMMIT_REF_NAME"
   CX_FLOW_ENABLED_VULNERABILITY_SCANNERS: "sast"
-  CX_FLOW_BREAK_BUILD: "false"                               # start with no gating
-  PARAMS: ""                                                 # extra CxFlow params if needed
+  CX_FLOW_BREAK_BUILD: "false"
+  PARAMS: ""
 
 checkmarx-scan:
   stage: test
   tags:
-    - mariner
+    - mariner                     # <-- must match an available runner tag
   image:
     name: checkmarx/${CHECKMARX_DOCKER_IMAGE}
     entrypoint: [""]
@@ -35,3 +31,4 @@ checkmarx-scan:
       --spring.profiles.active="$CX_FLOW_ENABLED_VULNERABILITY_SCANNERS" \
       --f=. $PARAMS
   rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
